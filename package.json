@@ -1,0 +1,81 @@
+{
+  "name": "executor",
+  "displayName": "executor",
+  "description": "Executes custom commands in the terminal",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "executor",
+          "title": "Executor",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "executor": [
+        {
+          "id": "executor.commandView",
+          "name": "Command",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "executor.runConfiguredCommand",
+        "title": "Run configured command",
+        "icon": "$(play)"
+      },
+      {
+        "command": "executor.stopConfiguredCommand",
+        "title": "Stop configured command",
+        "icon": "$(debug-stop)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "executor.runConfiguredCommand",
+          "group": "navigation",
+          "when": "!isInDiffEditor && !executor.running"
+        },
+        {
+          "command": "executor.stopConfiguredCommand",
+          "group": "navigation",
+          "when": "!isInDiffEditor && executor.running"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.125.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
+    "typescript-eslint": "^8.61.1",
+    "eslint": "^10.5.0",
+    "typescript": "^6.0.3",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  }
+}
