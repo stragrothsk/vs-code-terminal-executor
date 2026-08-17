@@ -5,8 +5,13 @@ interface CommandMessage {
 	command?: string;
 }
 
+interface ExecutorConfigFile {
+	command?: string;
+}
+
 class CommandViewProvider implements vscode.WebviewViewProvider {
 	public static readonly viewType = 'executor.commandView';
+	private static readonly configFileName = '.executor.json';
 
 	private view?: vscode.WebviewView;
 	private command = 'ros2 node list';
@@ -14,14 +19,55 @@ class CommandViewProvider implements vscode.WebviewViewProvider {
 	public readonly statusBarItem: vscode.StatusBarItem;
 
 	constructor(private readonly context: vscode.ExtensionContext) {
+		this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+		this.statusBarItem.command = 'executor.toggleConfiguredCommand';
+		this.initializeCommand();
+		this.updateToolbarState();
+	}
+
+	private async initializeCommand(): Promise<void> {
+		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+		const localCommand = await this.loadCommandFromLocalConfig(workspaceFolder?.uri);
+		if (localCommand) {
+			this.command = localCommand;
+			return;
+		}
+
 		const savedCommand = this.context.globalState.get<string>('configuredCommand');
 		if (savedCommand) {
 			this.command = savedCommand;
 		}
+	}
 
-		this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-		this.statusBarItem.command = 'executor.toggleConfiguredCommand';
-		this.updateToolbarState();
+	private async loadCommandFromLocalConfig(workspaceUri?: vscode.Uri): Promise<string | undefined> {
+		if (!workspaceUri) {
+			return undefined;
+		}
+
+		const configUri = vscode.Uri.joinPath(workspaceUri, CommandViewProvider.configFileName);
+		try {
+			const encoded = await vscode.workspace.fs.readFile(configUri);
+			const text = Buffer.from(encoded).toString('utf8');
+			const value = JSON.parse(text) as ExecutorConfigFile;
+			if (typeof value.command === 'string' && value.command.trim().length > 0) {
+				return value.command.trim();
+			}
+		} catch {
+			return undefined;
+		}
+
+		return undefined;
+	}
+
+	private async saveCommandToLocalConfig(command: string): Promise<void> {
+		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+		if (!workspaceFolder) {
+			return;
+		}
+
+		const configUri = vscode.Uri.joinPath(workspaceFolder.uri, CommandViewProvider.configFileName);
+		const payload = JSON.stringify({ command }, null, 2);
+		await vscode.workspace.fs.writeFile(configUri, Buffer.from(payload, 'utf8'));
 	}
 
 	public resolveWebviewView(webviewView: vscode.WebviewView): void {
@@ -32,7 +78,7 @@ class CommandViewProvider implements vscode.WebviewViewProvider {
 
 		webviewView.webview.onDidReceiveMessage((message: CommandMessage) => {
 			if (message.type === 'save' && typeof message.command === 'string') {
-				this.setConfiguredCommand(message.command);
+				void this.setConfiguredCommand(message.command);
 			}
 
 			if (message.type === 'run') {
@@ -92,11 +138,12 @@ class CommandViewProvider implements vscode.WebviewViewProvider {
 		this.setRunningState(false);
 	}
 
-	public setConfiguredCommand(nextCommand: string): void {
+	public async setConfiguredCommand(nextCommand: string): Promise<void> {
 		this.command = nextCommand.trim();
-		void this.context.globalState.update('configuredCommand', this.command);
+		await this.context.globalState.update('configuredCommand', this.command);
+		await this.saveCommandToLocalConfig(this.command);
 		this.updateView();
-		vscode.window.showInformationMessage('Executor command saved.');
+		vscode.window.showInformationMessage('Executor command saved to workspace config.');
 	}
 
 	private updateToolbarState(): void {
