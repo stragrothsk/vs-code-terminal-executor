@@ -116,7 +116,7 @@ class CommandViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	public runConfiguredCommand(): void {
-		this.initializeCommand()
+		this.initializeCommand();
 		const commandToRun = this.command.trim();
 		
 		if (!commandToRun) {
