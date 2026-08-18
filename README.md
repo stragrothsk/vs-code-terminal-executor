@@ -47,6 +47,7 @@ When a command is configured, the editor toolbar exposes the Run command action.
 
 - The extension currently manages a single named Executor terminal and reuses it when available.
 - The command is stored in VS Code global state for the current user.
+- The extension is currently not able to destinguise if the command is still running or not.
 
 ## Release notes
 
@@ -54,7 +55,5 @@ When a command is configured, the editor toolbar exposes the Run command action.
 
 - Initial release with:
   - custom command editor in the Activity Bar
-  - terminal execution support
   - editor toolbar run/stop action
-  - terminal reuse logic
 
