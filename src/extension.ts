@@ -14,7 +14,7 @@ class CommandViewProvider implements vscode.WebviewViewProvider {
 	private static readonly configFileName = '.executor.json';
 
 	private view?: vscode.WebviewView;
-	private command = 'ros2 node list';
+	private command = '';
 	private isRunning = false;
 	public readonly statusBarItem: vscode.StatusBarItem;
 
@@ -116,7 +116,9 @@ class CommandViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	public runConfiguredCommand(): void {
+		this.initializeCommand()
 		const commandToRun = this.command.trim();
+		
 		if (!commandToRun) {
 			vscode.window.showWarningMessage('Set a command in the Executor activity bar view first.');
 			return;
