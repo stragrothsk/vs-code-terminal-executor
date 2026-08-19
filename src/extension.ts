@@ -24,7 +24,7 @@ class CommandViewProvider {
 
 	public loadSettings(): void{
 		
-		let command:any = vscode.workspace.getConfiguration().get('settingsExcutorCommand');
+		let command:any = vscode.workspace.getConfiguration().get('settingsExecutorCommand');
 		if(command){
 			this.command = command
 		}
@@ -124,7 +124,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		);
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e =>{
-		if (e.affectsConfiguration("settingsExcutorCommand")){
+		if (e.affectsConfiguration("settingsExecutorCommand")){
 			provider.loadSettings()
 		}
 	}))

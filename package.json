@@ -15,7 +15,7 @@
       {
         "title": "Custom Executor",
         "properties": {
-          "settingsExcutorCommand": {
+          "settingsExecutorCommand": {
             "type": "string",
             "default": "echo 'CHANGE ME'",
             "description": "Command to be executed"
