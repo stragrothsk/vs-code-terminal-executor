@@ -51,6 +51,12 @@ When a command is configured, the editor toolbar exposes the Run command action.
 
 ## Release notes
 
+### 0.0.2
+- Added settings
+  - custom commands can now be edited in the settings 
+- Removed extension from activity bar
+- Reads no more from files in the workspace
+
 ### 0.0.1
 
 - Initial release with:

@@ -1,8 +1,8 @@
 {
   "name": "executor",
-  "displayName": "executor",
+  "displayName": "Custom Executor",
   "description": "Executes custom commands in the terminal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.125.0"
   },
@@ -11,24 +11,18 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "executor",
-          "title": "Executor",
-          "icon": "media/icon.svg"
+    "configuration":[
+      {
+        "title": "Custom Executor",
+        "properties": {
+          "settingsExcutorCommand": {
+            "type": "string",
+            "default": "echo 'CHANGE ME'",
+            "description": "Command to be executed"
+          }
         }
-      ]
-    },
-    "views": {
-      "executor": [
-        {
-          "id": "executor.commandView",
-          "name": "Command",
-          "type": "webview"
-        }
-      ]
-    },
+      }
+    ],
     "commands": [
       {
         "command": "executor.runConfiguredCommand",
