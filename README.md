@@ -40,7 +40,7 @@ When a command is configured, the editor toolbar exposes the Run command action.
 
 ## Requirements
 
-- VS Code 1.125 or newer
+- VS Code 1.143.1 or newer
 - A terminal-compatible shell available in your environment
 
 ## Known limitations
@@ -50,6 +50,11 @@ When a command is configured, the editor toolbar exposes the Run command action.
 - The extension is currently not able to destinguise if the command is still running or not.
 
 ## Release notes
+
+### 0.0.3
+- Added key shortcut to terminate command
+  - Limitation: If the terminal is focused it wont work. 
+
 
 ### 0.0.2
 - Added settings

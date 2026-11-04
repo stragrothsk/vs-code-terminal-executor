@@ -2,7 +2,7 @@
   "name": "executor",
   "displayName": "Custom Executor",
   "description": "Executes custom commands in the terminal",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.125.0"
   },
@@ -11,13 +11,21 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "keybindings": [
+      {
+        "command": "executor.stopConfiguredCommand",
+        "key": "ctrl+c",
+        "mac": "cmd+c",
+        "when": "executor.running"
+      }
+    ],
     "configuration":[
       {
         "title": "Custom Executor",
         "properties": {
           "settingsExecutorCommand": {
             "type": "string",
-            "default": "echo 'CHANGE ME'",
+            "default": "echo",
             "description": "Command to be executed"
           }
         }

@@ -10,9 +10,9 @@ interface ExecutorConfigFile {
 }
 
 class CommandViewProvider {
-	private view?: vscode.WebviewView;
 	private command = "";
 	private isRunning = false;
+	private shellExecutionDisposal?: vscode.Disposable;
 	public readonly statusBarItem: vscode.StatusBarItem;
 
 	constructor(private readonly context: vscode.ExtensionContext) {
@@ -66,18 +66,25 @@ class CommandViewProvider {
 
 		const terminal = this.getOrCreateExecutorTerminal();
 		terminal.sendText(commandToRun, true);
+
+		this.shellExecutionDisposal = vscode.window.onDidEndTerminalShellExecution((event) => {
+			if (event.terminal === terminal) {
+				vscode.window.showInformationMessage("Prozess beendet");
+				this.cleanupExecution();
+			}
+		});
 		this.setRunningState(true);
 	}
 
 	public stopConfiguredCommand(): void {
-		const terminal = vscode.window.terminals.find((candidate) => candidate.name === 'Executor');
+		const terminal = vscode.window.terminals.find((candidate) => candidate.name === 'Executor' && candidate.exitStatus === undefined);
 		if (!terminal) {
-			this.setRunningState(false);
+			this.cleanupExecution();
 			return;
 		}
 
 		terminal.sendText('\u0003', false);
-		this.setRunningState(false);
+		this.cleanupExecution();
 	}
 
 	private updateToolbarState(): void {
@@ -85,9 +92,6 @@ class CommandViewProvider {
 		this.statusBarItem.tooltip = this.isRunning ? 'Stop configured command' : 'Run configured command';
 		this.statusBarItem.show();
 		void vscode.commands.executeCommand('setContext', 'executor.running', this.isRunning);
-		if (this.view) {
-			this.view.webview.postMessage({ type: 'setRunning', running: this.isRunning });
-		}
 	}
 
 	private setRunningState(running: boolean): void {
@@ -98,6 +102,14 @@ class CommandViewProvider {
 
 		this.isRunning = running;
 		this.updateToolbarState();
+	}
+
+	private cleanupExecution(): void {
+		if (this.shellExecutionDisposal) {
+			this.shellExecutionDisposal.dispose();
+			this.shellExecutionDisposal = undefined;
+		}
+		this.setRunningState(false);
 	}
 }
 
@@ -132,7 +144,6 @@ export function activate(context: vscode.ExtensionContext): void {
 	context.subscriptions.push(provider.statusBarItem);
 	provider.statusBarItem.show();
 
-	context.globalState.update
 }
 
 export function deactivate(): void {
