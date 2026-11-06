@@ -4,11 +4,11 @@ A lightweight VS Code extension for running a saved terminal command from the Ac
 
 ## Features
 
-- Save a custom command in a dedicated Activity Bar panel
+- Save a custom command in the settings
 - Run it in the integrated terminal with one click
 - Reuse the same Executor terminal when it is available
 - Show a live running state in the editor toolbar
-- Switch from Run to Stop while the command is active
+- Terminate s running command with a customizable key-shortcut
 
 ## How it works
 
@@ -47,7 +47,7 @@ When a command is configured, the editor toolbar exposes the Run command action.
 
 - The extension currently manages a single named Executor terminal and reuses it when available.
 - The command is stored in VS Code global state for the current user.
-- The extension is currently not able to destinguise if the command is still running or not.
+- The extension is currently not able to distinguished if the command is still running or not.
 
 ## Release notes
 
