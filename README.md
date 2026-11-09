@@ -1,6 +1,6 @@
 # Executor
 
-A lightweight VS Code extension for running a saved terminal command from the Activity Bar and editor toolbar.
+A lightweight VS Code extension for running a saved terminal command from the editor toolbar.
 
 ## Features
 
@@ -53,7 +53,6 @@ When a command is configured, the editor toolbar exposes the Run command action.
 
 ### 0.0.3
 - Added key shortcut to terminate command
-  - Limitation: If the terminal is focused it wont work. 
 
 
 ### 0.0.2
